@@ -25,6 +25,7 @@ use std::{
 use tblgen::{record::Record, record_keeper::RecordKeeper, TableGenParser};
 
 const LLVM_INCLUDE_DIRECTORY: &str = env!("LLVM_INCLUDE_DIRECTORY");
+const MLIR_INCLUDE_DIRECTORY: &str = env!("MLIR_INCLUDE_DIRECTORY");
 
 pub fn generate_dialect(input: DialectInput) -> Result<TokenStream, Box<dyn std::error::Error>> {
     let mut parser = TableGenParser::new();
@@ -37,7 +38,11 @@ pub fn generate_dialect(input: DialectInput) -> Result<TokenStream, Box<dyn std:
         parser = parser.add_source_file(file);
     }
 
-    for path in input.include_directories().chain([LLVM_INCLUDE_DIRECTORY]) {
+    // Add both LLVM and MLIR include directories
+    for path in input.include_directories()
+        .chain([LLVM_INCLUDE_DIRECTORY])
+        .chain([MLIR_INCLUDE_DIRECTORY]) 
+    {
         parser = parser.add_include_directory(path);
     }
 
@@ -48,7 +53,13 @@ pub fn generate_dialect(input: DialectInput) -> Result<TokenStream, Box<dyn std:
         ) {
             path.into()
         } else {
-            Path::new(LLVM_INCLUDE_DIRECTORY).join(path)
+            // Try MLIR include directory first for MLIR dialect paths
+            let mlir_path = Path::new(MLIR_INCLUDE_DIRECTORY).join(path);
+            if mlir_path.exists() {
+                mlir_path
+            } else {
+                Path::new(LLVM_INCLUDE_DIRECTORY).join(path)
+            }
         };
 
         parser = parser.add_include_directory(&path.display().to_string());

@@ -1,0 +1,12 @@
+[package]
+name = "mlir-sys"
+version = "210.0.0"
+edition = "2021"
+description = "Low-level Rust bindings for MLIR C API"
+license = "Apache-2.0 WITH LLVM-exception"
+repository = "https://github.com/mlir-rs/melior"
+readme = "README.md"
+links = "mlir"
+
+[build-dependencies]
+bindgen = "0.70"
