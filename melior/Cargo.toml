@@ -22,3 +22,7 @@ mlir-sys = { path = "../mlir-sys" }
 indoc = "2.0.7"
 insta = "1.44.3"
 pretty_assertions = "1.4.1"
+
+[[example]]
+name = "affine_matmul"
+path = "examples/affine_matmul.rs"
